@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db-veterinaria:
+    image: mysql:8.0
+    container_name: mysql-BDvet
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=backend
+    ports:
+      - "3307:3306"
+
+  backend-app:
+    build: .
+    container_name: backend-container
+    ports:
+      - "8180:8180"
+    depends_on:
+      - db-veterinaria
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-veterinaria:3306/backend
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube-servidor
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
